@@ -3,6 +3,7 @@ package com.example.android40;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -69,6 +72,7 @@ public class EditList extends AppCompatActivity {
                     list.add(a);
                     arrayAdapter.notifyDataSetChanged();
                     editText.setText("");
+                    saveData();
                 }
             }
         });
@@ -98,6 +102,7 @@ public class EditList extends AppCompatActivity {
                         Album a = new Album(name, 0);
                         list.set(index, a);
                         arrayAdapter.notifyDataSetChanged();
+                        saveData();
                     }
                 }
             }
@@ -118,6 +123,7 @@ public class EditList extends AppCompatActivity {
                     arrayAdapter.notifyDataSetChanged();
                     current = null;
                     index = -1;
+                    saveData();
                 }
             }
         });
@@ -128,8 +134,19 @@ public class EditList extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saveData();
                 finish();
             }
         });
+    }
+
+
+    private void saveData() {
+        SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("album list", json);
+        editor.apply();
     }
 }

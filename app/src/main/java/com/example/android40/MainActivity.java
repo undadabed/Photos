@@ -3,6 +3,7 @@ package com.example.android40;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,19 +12,82 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Album> list;
+    ArrayList<Album> albums;
+    ArrayAdapter arrayAdapter;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = findViewById(R.id.listview);
-        list = new ArrayList<>();
+        listView = findViewById(R.id.listview);
+        loadData();
+
+        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, albums);
+        listView.setAdapter(arrayAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, Photos.class);
+                intent.putExtra("album", albums.get(i));
+                startActivity(intent);
+            }
+        });
+        configureEditButton();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, albums);
+        listView.setAdapter(arrayAdapter);
+    }
+
+    private void configureEditButton() {
+        Button editButton = (Button) findViewById(R.id.button);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, EditList.class);
+                intent.putExtra("albums", albums);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void saveData() {
+        SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(albums);
+        editor.putString("album list", json);
+        editor.apply();
+    }
+
+    private void loadData() {
+        SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString("album list", null);
+        Type type = new TypeToken<ArrayList<Album>>() {}.getType();
+        albums = gson.fromJson(json, type);
+        if (albums == null) {
+            albums = new ArrayList<>();
+        }
+    }
+
+    public void initialize() {
+        ArrayList<Album> list = new ArrayList<>();
         Album test1 = new Album("test1", 0);
         Photo random = new Photo("hello world");
         Photo random2 = new Photo("hello world2");
@@ -37,28 +101,11 @@ public class MainActivity extends AppCompatActivity {
         list.add(test3);
         list.add(test4);
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(arrayAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainActivity.this, Photos.class);
-                intent.putExtra("album", list.get(i));
-                startActivity(intent);
-            }
-        });
-        configureEditButton();
-    }
-    private void configureEditButton() {
-        Button editButton = (Button) findViewById(R.id.button);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditList.class);
-                intent.putExtra("albums", list);
-                startActivity(intent);
-            }
-        });
+        SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("album list", json);
+        editor.apply();
     }
 }

@@ -197,7 +197,7 @@ public class Album implements Serializable {
         if (startDate == null || endDate == null) {
             return album + "\n" + photoCount + " photos";
         }
-        return album + "\n" + photoCount + " photos from " + startDate + " to " + endDate;
+        return album + "\n" + photoCount + " photos\n" + startDate + " to " + endDate;
     }
 }
 
