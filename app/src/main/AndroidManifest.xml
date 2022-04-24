@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android40" >
         <activity
+            android:name=".PhotoAdd"
+            android:exported="false" />
+        <activity
+            android:name=".PhotoEdit"
+            android:exported="false" />
+        <activity
             android:name=".EditList"
             android:exported="false" />
         <activity

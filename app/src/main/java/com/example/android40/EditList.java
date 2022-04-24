@@ -118,7 +118,6 @@ public class EditList extends AppCompatActivity {
                     Toast.makeText(EditList.this, "No album selected", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(EditList.this, "index = " + index, Toast.LENGTH_SHORT).show();
                     list.remove((int)index);
                     arrayAdapter.notifyDataSetChanged();
                     current = null;

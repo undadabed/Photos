@@ -1,5 +1,7 @@
 package com.example.android40;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -154,4 +156,7 @@ public class Photo implements Serializable {
         }
     }
 
+    public String toString() {
+        return path + "\n" + caption;
+    }
 }

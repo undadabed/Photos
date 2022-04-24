@@ -10,14 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<Album> albums;
@@ -29,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.listview);
+        listView = findViewById(R.id.PhotoEditList);
         loadData();
 
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, albums);
@@ -40,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("album", albums.get(i));
+                intent.putExtra("albums", albums);
+                intent.putExtra("index", i);
                 startActivity(intent);
             }
         });
@@ -86,13 +86,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void clean() {
+        SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+
+    }
+
     public void initialize() {
         ArrayList<Album> list = new ArrayList<>();
         Album test1 = new Album("test1", 0);
-        Photo random = new Photo("hello world");
-        Photo random2 = new Photo("hello world2");
-        test1.addPhoto(random);
-        test1.addPhoto(random2);
+        Photo p = new Photo("hello world");
+        test1.addPhoto(p);
         Album test2 = new Album("test2", 0);
         Album test3 = new Album("test3", 0);
         Album test4 = new Album("test4", 0);
