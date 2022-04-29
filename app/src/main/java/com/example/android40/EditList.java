@@ -147,5 +147,9 @@ public class EditList extends AppCompatActivity {
         String json = gson.toJson(list);
         editor.putString("album list", json);
         editor.apply();
+
+        for(Album a : list){
+            
+        }
     }
 }

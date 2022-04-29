@@ -1,26 +1,42 @@
 package com.example.android40;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<Album> albums;
     ArrayAdapter arrayAdapter;
     ListView listView;
+
+
+    private static final int REQUEST_PERSMISIONS = 1234;
+
+    private static final String[] PERMISSION = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    private static final int PERMISSIONS_COUNT = 2;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +62,33 @@ public class MainActivity extends AppCompatActivity {
         configureEditButton();
     }
 
+
+    private boolean permissionsDenied(){
+        for(int i = 0; i < PERMISSIONS_COUNT; i++){
+            if(checkSelfPermission(PERMISSION[i]) != PackageManager.PERMISSION_GRANTED){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_PERSMISIONS && grantResults.length>0){
+            if(permissionsDenied()){
+                ((ActivityManager) Objects.requireNonNull(this.getSystemService(ACTIVITY_SERVICE))).clearApplicationUserData();
+                recreate();
+            }else{
+                onResume();
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        requestPermissions(PERMISSION, REQUEST_PERSMISIONS);
         loadData();
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, albums);
         listView.setAdapter(arrayAdapter);
@@ -67,12 +107,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveData() {
+        //Objects Being saved
         SharedPreferences prefs = getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
         String json = gson.toJson(albums);
         editor.putString("album list", json);
         editor.apply();
+        //Want to save the folders and images
+        
     }
 
     private void loadData() {

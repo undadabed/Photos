@@ -1,8 +1,10 @@
 package com.example.android40;
 
+import android.app.Person;
 import android.net.Uri;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,14 +33,17 @@ public class Photo implements Serializable {
     /**
      * All the tags for the photo
      */
-    private ArrayList<Tag> tags;
+    private ArrayList<PersonTag> pTags;
+
+    private ArrayList<LocationTag> lTags;
 
     /**
      * Create new photo with path given
      * @param path path to the photo
      */
     public Photo(String path) {
-        tags = new ArrayList<>();
+        pTags = new ArrayList<>();
+        lTags = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         setTime(cal.getTime());
         this.setPath(path);
@@ -97,63 +102,49 @@ public class Photo implements Serializable {
      * Update tags
      * @param t new tags
      */
-    public void setTags(ArrayList<Tag> t){
-        this.tags = t;
-    }
 
     /**
      * Add a new tag
      * @param t new tag to add
      */
-    public void addTag(Tag t){
-        tags.add(t);
-    }
-
-
-    /**
-     * @param t
-     */
-    public void deleteTag(Tag t){
-        tags.remove(t);
-    }
-
-    /**
-     * Get tags
-     * @return tags
-     */
-    public ArrayList<Tag> getTags(){
-        return tags;
-    }
-
-    /**
-     * Set a tag of type t to v
-     * @param t tag type to find
-     * @param v new value to set to
-     * @return true if updated, false otherwise
-     */
-    public boolean setTag(String t, String v){
-        for(Tag tag : tags){
-            if(tag.getType().equals(t)){
-                tag.setValue(v);
-                return true;
-            }
+    public void addTag(Object t){
+        if(t instanceof PersonTag){
+            pTags.add((PersonTag) t);
+        }else if(t instanceof LocationTag){
+            lTags.add((LocationTag) t);
         }
-        return false;
     }
 
-    /**
-     * Deletes all tags of type t
-     * @param t tag type to delete
-     */
-    public void removeTagType(String t){
-        ArrayList<Tag> tagT = new ArrayList<>();
-        for(Tag ta : tags){
-            if(ta.getType().equals(t))
-                tagT.add(ta);
-        }
-        for(Tag ta: tagT){
-            tags.remove(ta);
-        }
+
+
+    public ArrayList<PersonTag> getPersonTags(){
+        return pTags;
+    }
+
+    public ArrayList<LocationTag> getLocationTags(){
+        return lTags;
+    }
+
+
+
+
+    public void setTags(ArrayList<PersonTag> p, ArrayList<LocationTag> t){
+        pTags.clear();
+        pTags.addAll(p);
+        lTags.clear();
+        lTags.addAll(t);
+    }
+
+    public void removeTagByIndexP(int index){
+        if(index < pTags.size() || index >= 0)
+            pTags.remove(index);
+
+    }
+
+    public void removeTagByIndexL(int index){
+        if(index < lTags.size() || index >= 0)
+            lTags.remove(index);
+
     }
 
     public String toString() {

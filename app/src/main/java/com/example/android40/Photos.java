@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,8 +23,9 @@ public class Photos extends AppCompatActivity {
     Album current;
     ArrayList<Photo> photos;
     ArrayList<Album> update;
+    ArrayList<String> urls;
     ListView listView;
-    ArrayAdapter arrayAdapter;
+    ImageViewAdapter arrayAdapter;
     Button backButton;
     Button editButton;
     int save;
@@ -39,7 +42,7 @@ public class Photos extends AppCompatActivity {
         save = getIntent().getIntExtra("index", 0);
 
         listView = findViewById(R.id.PhotoEditList);
-        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
+        arrayAdapter = new ImageViewAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,8 +90,17 @@ public class Photos extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
-        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
+        arrayAdapter = new ImageViewAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, current.getPhotos());
         listView.setAdapter(arrayAdapter);
+    }
+
+    private ArrayList<Bitmap> fetchImages(ArrayList<String> urls){
+        ArrayList<Bitmap> images = new ArrayList<>();
+        for(String u : urls){
+            Bitmap bmp = BitmapFactory.decodeFile(u);
+            images.add(bmp);
+        }
+        return images;
     }
 
     private void saveData() {

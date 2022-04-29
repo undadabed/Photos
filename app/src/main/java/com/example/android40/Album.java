@@ -199,5 +199,13 @@ public class Album implements Serializable {
         }
         return album + "\n" + photoCount + " photos\n" + startDate + " to " + endDate;
     }
+
+    public ArrayList<String> getUrls(){
+        ArrayList<String> url = new ArrayList<>();
+        for(Photo p : photos){
+            url.add(p.getPath());
+        }
+        return url;
+    }
 }
 

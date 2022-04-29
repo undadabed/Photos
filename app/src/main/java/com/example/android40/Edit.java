@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,15 +21,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Edit extends AppCompatActivity {
     Album current;
     ArrayList<Photo> photos;
     ArrayList<Album> update;
+    ArrayList<String> urls;
     ListView listView;
-    ArrayAdapter arrayAdapter;
+    ImageViewAdapter arrayAdapter;
     Button backButton;
     Button deleteButton;
     Button editButton;
@@ -46,8 +53,7 @@ public class Edit extends AppCompatActivity {
         photos = current.getPhotos();
         selected = null;
         save = getIntent().getIntExtra("index", 0);
-
-        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
+        arrayAdapter = new ImageViewAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -108,8 +114,7 @@ public class Edit extends AppCompatActivity {
                     Toast.makeText(Edit.this, "No photo selected to delete", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    photos.remove((int)index);
-                    arrayAdapter.notifyDataSetChanged();
+                    arrayAdapter.removeItem(index);
                     saveData();
                     index = -1;
                     selected = null;
@@ -126,6 +131,15 @@ public class Edit extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private ArrayList<Bitmap> fetchImages(ArrayList<String> urls){
+        ArrayList<Bitmap> images = new ArrayList<>();
+        for(String u : urls){
+            Bitmap bmp = BitmapFactory.decodeFile(u);
+            images.add(bmp);
+        }
+        return images;
     }
 
     private void saveData() {
@@ -156,7 +170,8 @@ public class Edit extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
-        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
+        photos = current.getPhotos();
+        arrayAdapter = new ImageViewAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, photos);
         listView.setAdapter(arrayAdapter);
     }
 }

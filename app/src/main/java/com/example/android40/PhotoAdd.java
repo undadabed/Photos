@@ -1,8 +1,12 @@
 package com.example.android40;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -10,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -91,7 +96,7 @@ public class PhotoAdd extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 imageView.setImageBitmap(bitmap);
-                filePath = getURL(uri);
+                filePath = getURL(this, uri);
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -102,19 +107,22 @@ public class PhotoAdd extends AppCompatActivity {
         }
     }
 
-    private String getURL(Uri uri) {
-        String path;
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if (cursor == null) {
-            path = uri.getPath();
-        }
-        else {
+    private String getURL(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
-            int index = cursor.getColumnIndex("_data");
-            path = cursor.getString(index);
-            cursor.close();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            Log.e(TAG, "getRealPathFromURI Exception : " + e.toString());
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return path;
     }
 
     private void saveData() {
