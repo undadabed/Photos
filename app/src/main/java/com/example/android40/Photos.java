@@ -49,11 +49,10 @@ public class Photos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // go to carousel
-                Intent intent = new Intent(Photos.this, Edit.class);
+                Intent intent = new Intent(Photos.this, PhotoDisplay.class);
                 intent.putExtra("photo", photos.get(i));
                 intent.putExtra("album", current);
-                intent.putExtra("albums", update);
-                intent.putExtra("index", save);
+                intent.putExtra("index", i);
                 startActivity(intent);
             }
         });

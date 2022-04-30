@@ -88,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestPermissions(PERMISSION, REQUEST_PERSMISIONS);
+        if(permissionsDenied()){
+            requestPermissions(PERMISSION, REQUEST_PERSMISIONS);
+        }
         loadData();
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, albums);
         listView.setAdapter(arrayAdapter);

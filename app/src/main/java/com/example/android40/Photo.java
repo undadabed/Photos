@@ -150,4 +150,11 @@ public class Photo implements Serializable {
     public String toString() {
         return path + "\n" + caption;
     }
+
+    public boolean equals(Object o){
+        if(o instanceof Photo){
+            return ((Photo)o).getPath().equals(path);
+        }else
+            return false;
+    }
 }

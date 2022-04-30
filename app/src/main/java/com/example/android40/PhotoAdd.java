@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -24,8 +26,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -97,6 +101,13 @@ public class PhotoAdd extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 imageView.setImageBitmap(bitmap);
                 filePath = getURL(this, uri);
+//                CaptionLoader loader = new CaptionLoader(this);
+//                loader.execute();
+                //get file name from url
+                File f = new File(filePath);
+                if (f.exists()) {
+                    editText.setText(f.getCanonicalPath());
+                }
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -135,4 +146,28 @@ public class PhotoAdd extends AppCompatActivity {
         editor.putString("album list", json);
         editor.apply();
     }
+
+//    private static class CaptionLoader extends AsyncTask<String, Void, String> {
+//
+//        private final WeakReference<PhotoAdd> photoAdd;
+//
+//        CaptionLoader(PhotoAdd activity){
+//            photoAdd = new WeakReference<>(activity);
+//        }
+//        @Override
+//        protected String doInBackground(String... strings) {
+//            //get file name from url
+//            File f = new File(strings[0]);
+//            if (f.exists()) {
+//                return f.getName();
+//            }else
+//                return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            PhotoAdd activity = photoAdd.get();
+//            activity.editText.setText(s);
+//        }
+//    }
 }

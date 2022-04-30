@@ -37,6 +37,7 @@ public class Edit extends AppCompatActivity {
     Button backButton;
     Button deleteButton;
     Button editButton;
+    Button moveButton;
     Photo selected;
     Integer index;
     int save;
@@ -68,6 +69,7 @@ public class Edit extends AppCompatActivity {
         configureDeleteButton();
         configureBackButton();
         configureFloatingButton();
+        configureMoveButton();
     }
 
     private void configureFloatingButton() {
@@ -81,6 +83,18 @@ public class Edit extends AppCompatActivity {
                 intent.putExtra("index", save);
                 startActivity(intent);
             }
+        });
+    }
+
+    private void configureMoveButton(){
+        moveButton = findViewById(R.id.move);
+        moveButton.setOnClickListener((v)->{
+            Intent intent = new Intent(Edit.this, MovePhoto.class);
+            intent.putExtra("albums", update);
+            intent.putExtra("album", current);
+            intent.putExtra("photo", selected);
+            intent.putExtra("photoIndex", index);
+            startActivity(intent);
         });
     }
 

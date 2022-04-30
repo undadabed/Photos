@@ -42,6 +42,7 @@ public class PhotoEdit extends AppCompatActivity {
     Button deleteButton;
     Button addPersonButton;
     Button addLocationButton;
+    Button cancel;
     EditText tagValue;
     ListView personTagList;
     ListView locationTagList;
@@ -72,6 +73,7 @@ public class PhotoEdit extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteTag);
         addPersonButton = findViewById(R.id.addTagPerson);
         addLocationButton = findViewById(R.id.addTagLocation);
+        cancel = findViewById(R.id.cancel);
         tagValue = findViewById(R.id.tagValue);
         personTagList = findViewById(R.id.personTagList);
         locationTagList = findViewById(R.id.locationTagList);
@@ -111,16 +113,16 @@ public class PhotoEdit extends AppCompatActivity {
         });
         editText.setText(selected.getCaption());
         //Display Image
-        File imgFile = new File(selected.getPath());
-        if (imgFile.exists()) {
-            Bitmap b = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            Toast.makeText(PhotoEdit.this, imgFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-            imageView.setImageBitmap(b);
-        }
+        ImageLoader loader = new ImageLoader(imageView);
+        loader.execute(selected.getPath());
+
+
+        //Configure Buttons
         configureDeleteTagButton();
         configureAddPersonButton();
         configureAddLocationButton();
         configureUpdateButton();
+        configureCancelButton();
     }
 
     private void configureUpdateButton() {
@@ -144,6 +146,14 @@ public class PhotoEdit extends AppCompatActivity {
 
     }
 
+    private void configureCancelButton(){
+        cancel.setOnClickListener((v)-> {
+            finish();
+        });
+    }
+
+
+
     private void configureDeleteTagButton() {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +174,6 @@ public class PhotoEdit extends AppCompatActivity {
                 Toast.makeText(PhotoEdit.this, "Tag deleted", Toast.LENGTH_SHORT).show();
             }
         });
-        saveData();
     }
 
     private void configureAddPersonButton() {
@@ -181,7 +190,6 @@ public class PhotoEdit extends AppCompatActivity {
                 tagValue.setText("");
             }
         });
-        saveData();
     }
 
     private void configureAddLocationButton() {
@@ -198,7 +206,6 @@ public class PhotoEdit extends AppCompatActivity {
                 tagValue.setText("");
             }
         });
-        saveData();
     }
 
 
