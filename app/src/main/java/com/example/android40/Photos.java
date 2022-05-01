@@ -51,7 +51,7 @@ public class Photos extends AppCompatActivity {
                 // go to carousel
                 Intent intent = new Intent(Photos.this, PhotoDisplay.class);
                 intent.putExtra("photo", photos.get(i));
-                intent.putExtra("album", current);
+                intent.putExtra("photos", current.getPhotos());
                 intent.putExtra("index", i);
                 startActivity(intent);
             }
@@ -91,15 +91,6 @@ public class Photos extends AppCompatActivity {
         loadData();
         arrayAdapter = new ImageViewAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, current.getPhotos());
         listView.setAdapter(arrayAdapter);
-    }
-
-    private ArrayList<Bitmap> fetchImages(ArrayList<String> urls){
-        ArrayList<Bitmap> images = new ArrayList<>();
-        for(String u : urls){
-            Bitmap bmp = BitmapFactory.decodeFile(u);
-            images.add(bmp);
-        }
-        return images;
     }
 
     private void saveData() {

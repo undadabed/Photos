@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         configureEditButton();
+        configureSearchButton();
     }
 
 
@@ -105,6 +106,15 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("albums", albums);
                 startActivity(intent);
             }
+        });
+    }
+
+    private void configureSearchButton(){
+        Button searchButton = (Button) findViewById(R.id.search);
+        searchButton.setOnClickListener((v)->{
+            Intent intent = new Intent(MainActivity.this, Search.class);
+            intent.putExtra("albums", albums);
+            startActivity(intent);
         });
     }
 

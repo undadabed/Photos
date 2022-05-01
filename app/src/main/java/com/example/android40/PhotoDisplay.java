@@ -29,7 +29,6 @@ public class PhotoDisplay extends AppCompatActivity {
 
     //Objects
     Photo photo;
-    Album album;
     ArrayList<Photo> photos;
     int photoIndex;
     int size;
@@ -54,9 +53,8 @@ public class PhotoDisplay extends AppCompatActivity {
         back = findViewById(R.id.back);
         //Get objects
         photo = (Photo) getIntent().getSerializableExtra("photo");
-        album = (Album) getIntent().getSerializableExtra("album");
         photoIndex = getIntent().getIntExtra("index", 0);
-        photos = album.getPhotos();
+        photos = (ArrayList<Photo>) getIntent().getSerializableExtra("photos");
         size = photos.size();
         loader = new ImageLoader(imageDisplay);
         //Load Information
